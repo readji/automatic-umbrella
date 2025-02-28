@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>랜딩페이지</title>
+</head>
+<body>
+    <h1>랜딩페이지</h1>
+    <div id="content"></div>
+    <h3>정보 입력</h3>
+    <form id="dbForm">
+        <div id="dbFields"></div>
+        <button type="submit">제출</button>
+    </form>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get("id");
+        const data = JSON.parse(localStorage.getItem(id));
+
+        if (!data) {
+            document.getElementById("content").innerHTML = "<p>페이지가 존재하지 않습니다.</p>";
+        } else {
+            document.getElementById("content").innerHTML = data.images.map(img => `<img src="${img}" width="100%">`).join("");
+
+            const fieldsDiv = document.getElementById("dbFields");
+            if (data.fields.name) fieldsDiv.innerHTML += '<input type="text" id="name" placeholder="이름"><br>';
+            if (data.fields.email) fieldsDiv.innerHTML += '<input type="email" id="email" placeholder="이메일"><br>';
+            if (data.fields.phone) fieldsDiv.innerHTML += '<input type="text" id="phone" placeholder="전화번호"><br>';
+        }
+
+        document.getElementById("dbForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            const entry = {};
+            if (data.fields.name) entry.name = document.getElementById("name").value;
+            if (data.fields.email) entry.email = document.getElementById("email").value;
+            if (data.fields.phone) entry.phone = document.getElementById("phone").value;
+
+            data.db.push(entry);
+            localStorage.setItem(id, JSON.stringify(data));
+            alert("제출 완료!");
+        });
+    </script>
+</body>
+</html>
