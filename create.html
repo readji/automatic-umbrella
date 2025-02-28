@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>랜딩페이지 생성</title>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; padding: 20px; }
+        input, button { margin: 5px; padding: 10px; }
+        .img-container img { max-width: 100%; display: block; margin: 10px auto; }
+    </style>
+</head>
+<body>
+    <h1>랜딩페이지 생성</h1>
+    <input type="file" id="imageUpload" multiple><br>
+    <div id="imagePreview" class="img-container"></div>
+    
+    <h3>DB 수집 항목 선택</h3>
+    <label><input type="checkbox" id="nameField"> 이름</label>
+    <label><input type="checkbox" id="emailField"> 이메일</label>
+    <label><input type="checkbox" id="phoneField"> 전화번호</label><br>
+
+    <button onclick="createLandingPage()">생성 완료하기</button>
+    <p id="result"></p>
+
+    <script>
+        let imageUrls = [];
+
+        document.getElementById("imageUpload").addEventListener("change", function(event) {
+            const files = event.target.files;
+            const preview = document.getElementById("imagePreview");
+            preview.innerHTML = "";
+            imageUrls = [];
+
+            for (let file of files) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imageUrls.push(e.target.result);
+                    const img = document.createElement("img");
+                    img.src = e.target.result;
+                    preview.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function createLandingPage() {
+            const id = Date.now().toString();
+            const nameField = document.getElementById("nameField").checked;
+            const emailField = document.getElementById("emailField").checked;
+            const phoneField = document.getElementById("phoneField").checked;
+
+            const pageData = {
+                images: imageUrls,
+                fields: { name: nameField, email: emailField, phone: phoneField },
+                db: []
+            };
+
+            localStorage.setItem(id, JSON.stringify(pageData));
+
+            document.getElementById("result").innerHTML = `
+                <p>랜딩페이지 생성 완료!</p>
+                <a href="landing.html?id=${id}" target="_blank">랜딩페이지 보기</a>
+            `;
+        }
+    </script>
+</body>
+</html>
