@@ -15,33 +15,32 @@
     </form>
 
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const id = urlParams.get("id");
-        const data = JSON.parse(localStorage.getItem(id));
+        function loadLandingPage() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const images = JSON.parse(urlParams.get("images"));
+            const nameField = urlParams.get("name") === "true";
+            const emailField = urlParams.get("email") === "true";
+            const phoneField = urlParams.get("phone") === "true";
 
-        if (!data) {
-            document.getElementById("content").innerHTML = "<p>페이지가 존재하지 않습니다.</p>";
-        } else {
-            document.getElementById("content").innerHTML = data.images.map(img => `<img src="${img}" width="100%">`).join("");
+            if (!images) {
+                document.getElementById("content").innerHTML = "<p>페이지가 존재하지 않습니다.</p>";
+                return;
+            }
+
+            document.getElementById("content").innerHTML = images.map(img => `<img src="${img}" width="100%">`).join("");
 
             const fieldsDiv = document.getElementById("dbFields");
-            if (data.fields.name) fieldsDiv.innerHTML += '<input type="text" id="name" placeholder="이름"><br>';
-            if (data.fields.email) fieldsDiv.innerHTML += '<input type="email" id="email" placeholder="이메일"><br>';
-            if (data.fields.phone) fieldsDiv.innerHTML += '<input type="text" id="phone" placeholder="전화번호"><br>';
+            if (nameField) fieldsDiv.innerHTML += '<input type="text" id="name" placeholder="이름"><br>';
+            if (emailField) fieldsDiv.innerHTML += '<input type="email" id="email" placeholder="이메일"><br>';
+            if (phoneField) fieldsDiv.innerHTML += '<input type="text" id="phone" placeholder="전화번호"><br>';
         }
 
         document.getElementById("dbForm").addEventListener("submit", function(e) {
             e.preventDefault();
-
-            const entry = {};
-            if (data.fields.name) entry.name = document.getElementById("name").value;
-            if (data.fields.email) entry.email = document.getElementById("email").value;
-            if (data.fields.phone) entry.phone = document.getElementById("phone").value;
-
-            data.db.push(entry);
-            localStorage.setItem(id, JSON.stringify(data));
-            alert("제출 완료!");
+            alert("제출 완료! (데이터는 저장되지 않음)");
         });
+
+        loadLandingPage();
     </script>
 </body>
 </html>
