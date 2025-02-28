@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DB 조회</title>
+</head>
+<body>
+    <h1>랜딩페이지 DB</h1>
+    <input type="text" id="pageId" placeholder="랜딩페이지 ID 입력">
+    <button onclick="loadDB()">조회</button>
+    <div id="dbTable"></div>
+
+    <script>
+        function loadDB() {
+            const id = document.getElementById("pageId").value;
+            const data = JSON.parse(localStorage.getItem(id));
+
+            if (!data || !data.db.length) {
+                document.getElementById("dbTable").innerHTML = "<p>데이터 없음</p>";
+                return;
+            }
+
+            document.getElementById("dbTable").innerHTML = data.db.map(entry => `
+                <p>${JSON.stringify(entry)}</p>
+            `).join("");
+        }
+    </script>
+</body>
+</html>
