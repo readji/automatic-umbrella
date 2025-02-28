@@ -17,22 +17,24 @@
     <script>
         function loadLandingPage() {
             const urlParams = new URLSearchParams(window.location.search);
-            const images = JSON.parse(urlParams.get("images"));
-            const nameField = urlParams.get("name") === "true";
-            const emailField = urlParams.get("email") === "true";
-            const phoneField = urlParams.get("phone") === "true";
+            const id = urlParams.get("id");
 
-            if (!images) {
+            // localStorage에서 데이터 가져오기
+            const data = JSON.parse(localStorage.getItem(`landing-${id}`));
+
+            if (!data) {
                 document.getElementById("content").innerHTML = "<p>페이지가 존재하지 않습니다.</p>";
                 return;
             }
 
-            document.getElementById("content").innerHTML = images.map(img => `<img src="${img}" width="100%">`).join("");
+            // 이미지 출력
+            document.getElementById("content").innerHTML = data.images.map(img => `<img src="${img}" width="100%">`).join("");
 
+            // 입력 필드 출력
             const fieldsDiv = document.getElementById("dbFields");
-            if (nameField) fieldsDiv.innerHTML += '<input type="text" id="name" placeholder="이름"><br>';
-            if (emailField) fieldsDiv.innerHTML += '<input type="email" id="email" placeholder="이메일"><br>';
-            if (phoneField) fieldsDiv.innerHTML += '<input type="text" id="phone" placeholder="전화번호"><br>';
+            if (data.fields.name) fieldsDiv.innerHTML += '<input type="text" id="name" placeholder="이름"><br>';
+            if (data.fields.email) fieldsDiv.innerHTML += '<input type="email" id="email" placeholder="이메일"><br>';
+            if (data.fields.phone) fieldsDiv.innerHTML += '<input type="text" id="phone" placeholder="전화번호"><br>';
         }
 
         document.getElementById("dbForm").addEventListener("submit", function(e) {
