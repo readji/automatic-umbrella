@@ -33,31 +33,30 @@
                 reader.onload = function(e) {
                     images.push(e.target.result);
                     if (images.length === fileInput.length) {
-                        generateURL(images);
+                        saveDataAndGenerateURL(images);
                     }
                 };
                 reader.readAsDataURL(file);
             }
             
             if (fileInput.length === 0) {
-                generateURL([]);
+                saveDataAndGenerateURL([]);
             }
         }
 
-        function generateURL(images) {
+        function saveDataAndGenerateURL(images) {
             const id = Date.now().toString();
             const nameField = document.getElementById("nameField").checked;
             const emailField = document.getElementById("emailField").checked;
             const phoneField = document.getElementById("phoneField").checked;
 
-            const urlParams = new URLSearchParams();
-            urlParams.append("id", id);
-            urlParams.append("images", JSON.stringify(images));
-            urlParams.append("name", nameField);
-            urlParams.append("email", emailField);
-            urlParams.append("phone", phoneField);
+            const pageData = { images, fields: { name: nameField, email: emailField, phone: phoneField } };
 
-            const landingPageURL = `landing.html?${urlParams.toString()}`;
+            // localStorage에 저장 (데이터 손실 방지)
+            localStorage.setItem(`landing-${id}`, JSON.stringify(pageData));
+
+            // URL에서 ID만 전달하도록 변경
+            const landingPageURL = `landing.html?id=${id}`;
             document.getElementById("result").innerHTML = `
                 <p>랜딩페이지 생성 완료!</p>
                 <a href="${landingPageURL}" target="_blank">랜딩페이지 보기</a>
