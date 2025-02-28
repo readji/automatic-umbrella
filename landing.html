@@ -3,46 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>랜딩페이지</title>
+    <title>랜딩페이지 생성</title>
 </head>
 <body>
-    <h1>랜딩페이지</h1>
-    <div id="content"></div>
-    <h3>정보 입력</h3>
-    <form id="dbForm">
-        <div id="dbFields"></div>
-        <button type="submit">제출</button>
-    </form>
+    <h1>랜딩페이지 생성</h1>
+    
+    <input type="text" id="name" placeholder="이름 입력"><br>
+    <input type="email" id="email" placeholder="이메일 입력"><br>
+    <input type="text" id="phone" placeholder="전화번호 입력"><br>
+    
+    <textarea id="imageLinks" placeholder="이미지 링크 입력 (여러 개면 줄바꿈)" rows="5"></textarea><br>
+    
+    <button onclick="createLandingPage()">사이트 만들기</button>
+    
+    <p id="result"></p>
 
     <script>
-        function loadLandingPage() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const id = urlParams.get("id");
+        function createLandingPage() {
+            const name = document.getElementById("name").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const phone = document.getElementById("phone").value.trim();
+            const imageLinks = document.getElementById("imageLinks").value.trim().split("\n");
 
-            // localStorage에서 데이터 가져오기
-            const data = JSON.parse(localStorage.getItem(`landing-${id}`));
-
-            if (!data) {
-                document.getElementById("content").innerHTML = "<p>페이지가 존재하지 않습니다.</p>";
+            if (!name || !email || !phone || imageLinks.length === 0 || imageLinks[0] === "") {
+                alert("모든 정보를 입력하세요!");
                 return;
             }
 
-            // 이미지 출력
-            document.getElementById("content").innerHTML = data.images.map(img => `<img src="${img}" width="100%">`).join("");
+            // 랜딩페이지 HTML 생성
+            const landingPageContent = `
+                <!DOCTYPE html>
+                <html lang="ko">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>${name}님의 랜딩페이지</title>
+                </head>
+                <body>
+                    <h1>${name}님의 랜딩페이지</h1>
+                    <p>📧 이메일: ${email}</p>
+                    <p>📞 전화번호: ${phone}</p>
+                    <h3>📷 업로드한 이미지</h3>
+                    ${imageLinks.map(url => `<img src="${url}" width="300"><br>`).join('')}
+                </body>
+                </html>
+            `;
 
-            // 입력 필드 출력
-            const fieldsDiv = document.getElementById("dbFields");
-            if (data.fields.name) fieldsDiv.innerHTML += '<input type="text" id="name" placeholder="이름"><br>';
-            if (data.fields.email) fieldsDiv.innerHTML += '<input type="email" id="email" placeholder="이메일"><br>';
-            if (data.fields.phone) fieldsDiv.innerHTML += '<input type="text" id="phone" placeholder="전화번호"><br>';
+            // HTML 파일 다운로드
+            const blob = new Blob([landingPageContent], { type: "text/html" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `${name}_landing.html`;
+            a.innerText = "랜딩페이지 다운로드";
+            document.getElementById("result").innerHTML = "";
+            document.getElementById("result").appendChild(a);
         }
-
-        document.getElementById("dbForm").addEventListener("submit", function(e) {
-            e.preventDefault();
-            alert("제출 완료! (데이터는 저장되지 않음)");
-        });
-
-        loadLandingPage();
     </script>
 </body>
 </html>
